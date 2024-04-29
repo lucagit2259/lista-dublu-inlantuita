@@ -1,0 +1,134 @@
+#include <iostream>
+#include <fstream>
+using namespace std;
+struct nod
+{
+    int inf;
+    nod *stg, *dr;
+};
+nod *prim = NULL;
+nod *ultim = NULL;
+void adaug_prim_nod(nod *&prim, nod*&ultim, int x)
+{
+    nod *a = new nod;
+    a->inf = x;
+    a->stg = NULL;
+    a->dr = NULL;
+    prim = a;
+    ultim = prim;
+}
+void afisare_stanga_dreapta(nod *prim)
+{
+    nod *a;
+    for (a = prim; a != NULL; a = a->dr)
+    {
+        cout << a->inf << " ";
+    }
+    cout << endl;
+}
+void afisare_dreapta_stanga(nod*ultim)
+{
+     if (prim==NULL) cout<<"lista vida ";
+     else{
+    for (nod *a = ultim; a != NULL; a = a->stg)
+    {
+        cout << a->inf << " ";
+    }
+    cout << endl;
+    }
+}
+void adaug_dreapta_stanga(nod *&prim, nod *&ultim, int x)
+{
+    nod *a = new nod;
+    a->inf = x;
+    a->dr = NULL;
+    a->stg = ultim;
+    ultim->dr = a;
+    ultim = a;
+}
+void adaug_stanga_dreapta(nod *&prim, nod *&ultim, int x)
+{
+    nod *a = new nod;
+    a->inf = x;
+    a->stg = NULL;
+    a->dr = prim;
+    prim->stg = a;
+    prim = a;
+}
+int palindrom(int s)
+{   int og=0;
+    int x=s;
+    while (s)
+    {
+        og=og*10+s%10;
+        s=s/10;
+    }
+    if (og==x) return 1;
+    else return 0;
+}
+void stergere_ultim (nod*&prim, nod*&ultim)
+{
+    if (ultim==NULL) cout<<"lista vida ";
+    else{
+        nod *a;
+        a=ultim->stg;
+        delete ultim;
+        ultim=a;
+         if (ultim != NULL)
+            ultim->dr = NULL;
+    }
+}
+void stergere_prim (nod*&prim, nod*&ultim)
+{
+    if (prim==NULL) cout<<"lista vida ";
+    else{
+        nod *a;
+        a=prim->dr;
+        delete prim;
+        prim=a;
+        if (prim!=NULL)
+            prim->stg=NULL;
+    }
+}
+int main()
+{
+    int x;
+    int i=1;
+    ifstream f("date1.txt");
+    f >> x;
+    cout<<" adaug primul nod numarul; "<<x<<" ";
+    adaug_prim_nod(prim, ultim, x);
+    cout<<"\nse vor adauga ori din stanga, ori din dreapta urmatoarele numere: ";
+    while(f>>x)
+    {
+        i++;
+        if (i%2==0)
+            {
+                cout<<x<<" ";
+                adaug_dreapta_stanga(prim,ultim, x);
+        }
+        else {
+                cout<<x<<" ";
+                adaug_stanga_dreapta(prim,ultim, x);
+            }
+    }
+        int s=0;
+        cout << "\nafisare stanga_dreapta: ";
+    afisare_stanga_dreapta(prim);
+    cout << endl;
+    cout << "afisare dreapta_stanga: ";
+    afisare_dreapta_stanga(ultim);
+    cout<<"\nafisarea dupa conditia de palindrom: ";
+    for (nod *p=prim; p!=ultim; p=p->dr)
+        s=s+p->inf;
+    if (palindrom(s))
+    stergere_prim(prim, ultim);
+    else
+    stergere_ultim(prim, ultim);
+    cout << "\nafisare stanga_dreapta: ";
+    afisare_stanga_dreapta(prim);
+    cout << endl;
+    cout << "afisare dreapta_stanga: ";
+    afisare_dreapta_stanga(ultim);
+    return 0;
+}
